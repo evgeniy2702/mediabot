@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="mediabot:war">
+    <output-path>$PROJECT_DIR$/mediabot/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>mediabot</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="MediaBot.war">
+      <element id="artifact" artifact-name="mediabot:war exploded" />
+    </root>
+  </artifact>
+</component>
