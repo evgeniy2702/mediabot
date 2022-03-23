@@ -7,14 +7,13 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.client.util.store.MemoryDataStoreFactory;
+import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.sheets.v4.SheetsScopes;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import ua.ukrposhta.mediabot.utils.logger.BotLogger;
 import ua.ukrposhta.mediabot.utils.type.LoggerType;
 
-import java.awt.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,14 +53,14 @@ public class GoogleAuthorizeUtil {
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(GoogleNetHttpTransport.newTrustedTransport(),
                     JacksonFactory.getDefaultInstance(),
                     clientSecrets, scopes)
-                .setDataStoreFactory(new MemoryDataStoreFactory())
+                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File("tokens")))
                 .setAccessType("offline").build();
 
-        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8081).build();
+        LocalServerReceiver receiver = new LocalServerReceiver.Builder().build();
 
         Credential credential = null;
         try {
-            credential = new AuthorizationCodeInstalledCustom(flow, receiver).authorize("user");
+            credential = new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
         } catch (Exception e){
             e.getStackTrace();
         }

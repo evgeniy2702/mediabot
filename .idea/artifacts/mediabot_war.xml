@@ -7,7 +7,7 @@
         <packaging>war</packaging>
       </options>
     </properties>
-    <root id="archive" name="MediaBot.war">
+    <root id="archive" name="Media-Bot.war">
       <element id="artifact" artifact-name="mediabot:war exploded" />
     </root>
   </artifact>

@@ -20,7 +20,7 @@ public class SheetsServiceUtil {
     private BotLogger consoleLogger = BotLogger.getLogger(LoggerType.CONSOLE);
 
     @Value("${google.application.name}")
-    private String APPLICATION_NAME = "ukrposhta-media";
+    private String APPLICATION_NAME ;
 
     public Sheets getSheetsService() throws IOException, GeneralSecurityException {
 

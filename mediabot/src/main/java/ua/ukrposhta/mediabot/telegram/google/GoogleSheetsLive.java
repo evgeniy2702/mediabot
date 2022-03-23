@@ -9,13 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
+import ua.ukrposhta.mediabot.telegram.bot.BotContext;
 import ua.ukrposhta.mediabot.telegram.model.User;
 import ua.ukrposhta.mediabot.utils.logger.BotLogger;
 import ua.ukrposhta.mediabot.utils.type.LoggerType;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,9 +29,6 @@ public class GoogleSheetsLive {
     private BotLogger telegramLogger = BotLogger.getLogger(LoggerType.TELEGRAM);
     private BotLogger consoleLogger = BotLogger.getLogger(LoggerType.CONSOLE);
 
-    @Autowired
-    private RestTemplate restTemplate;
-
     private SheetsServiceUtil sheetsServiceUtil;
 
     @Autowired
@@ -42,22 +40,29 @@ public class GoogleSheetsLive {
     private String SPREADSHEET_ID ;
 
 
-    public Integer writeDataInExcelSheet(User user, Integer numberOfCellExcelSheetForMediaRequest) throws IOException, GeneralSecurityException {
+    public Integer writeDataInExcelSheet(BotContext context,
+                                         Integer numberOfCellExcelSheetForMediaRequest,
+                                         Integer numberOfRowsForMediaRequest) throws IOException, GeneralSecurityException {
 
         consoleLogger.info("start writeDataInExcelSheet method in GoogleSheetsLive.class");
 
         List<ValueRange> data = new ArrayList<>();
 
+        User user = context.getUser();
+
+        if(numberOfCellExcelSheetForMediaRequest == numberOfRowsForMediaRequest)
+            numberOfCellExcelSheetForMediaRequest = 2;
+
         ValueRange requestMediaInfo = new ValueRange()
                 .setRange("A" + numberOfCellExcelSheetForMediaRequest)
                 .setValues(Collections.singletonList(
-                        Arrays.asList(user.getMediaName(), user.getName_surname(), user.getSubject(),
+                        Arrays.asList(LocalDate.now().toString(),user.getMediaName(), user.getName_surname(), user.getSubject(),
                                 user.getPhone(), user.getEmail())));
 
         data.add(requestMediaInfo);
 
         ValueRange numberOfCellExcel = new ValueRange()
-                .setRange("X2")
+                .setRange("X994")
                 .setValues(Collections.singletonList(
                         Collections.singletonList(numberOfCellExcelSheetForMediaRequest + 1)));
 
@@ -86,12 +91,14 @@ public class GoogleSheetsLive {
     }
 
 
-    public Integer readNumberOfCellExcelSheetFromExcelSheet(Integer numberOfCellExcelSheet, User user) throws IOException, GeneralSecurityException {
+    public Integer readNumberOfCellExcelSheetFromExcelSheet(BotContext context, int numberOfCellExcelSheet) throws IOException, GeneralSecurityException {
 
         consoleLogger.info("start readNumberOfCellExcelSheetFromExcelSheet method in GoogleSheetsLive.class");
 
+        int numberOfRowsForMediaRequest = 100;
+
         try {
-            List<String> ranges = Collections.singletonList("X2");
+            List<String> ranges = Arrays.asList("X994","X992");
             BatchGetValuesResponse readResult = sheetsServiceUtil.getSheetsService().spreadsheets().values()
                     .batchGet(SPREADSHEET_ID)
                     .setRanges(ranges)
@@ -100,7 +107,10 @@ public class GoogleSheetsLive {
             numberOfCellExcelSheet = Integer.valueOf(readResult.getValueRanges().get(0)
                                             .getValues().get(0).get(0).toString());
 
-            telegramLogger.info("body for write to excel sheet numberOfCellExcelSheet : " + numberOfCellExcelSheet);
+            numberOfRowsForMediaRequest = Integer.valueOf(readResult.getValueRanges().get(1)
+                                            .getValues().get(0).get(0).toString());
+
+            telegramLogger.info("body for write to excel sheet numberOfCellExcelSheet : " + numberOfCellExcelSheet + " ; numberOfRowsForMediaRequest : " + numberOfRowsForMediaRequest);
         }catch (GoogleJsonResponseException google){
             consoleLogger.error("ERROR readNumberOfCellExcelSheetFromExcelSheet method in GoogleSheetsLive.class : " + Arrays.toString(google.getStackTrace()));
             telegramLogger.error("ERROR readNumberOfCellExcelSheetFromExcelSheet method in GoogleSheetsLive.class : " + Arrays.toString(google.getStackTrace()));
@@ -110,7 +120,7 @@ public class GoogleSheetsLive {
         if(numberOfCellExcelSheet == 0)
             numberOfCellExcelSheet = 2;
 
-        return writeDataInExcelSheet(user,numberOfCellExcelSheet);
+        return writeDataInExcelSheet(context, numberOfCellExcelSheet, numberOfRowsForMediaRequest);
     }
 
 }

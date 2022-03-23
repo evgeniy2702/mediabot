@@ -9,18 +9,21 @@ import ua.ukrposhta.mediabot.telegram.bot.BotContext;
 import ua.ukrposhta.mediabot.telegram.bot.TelegramBotState;
 import ua.ukrposhta.mediabot.utils.logger.BotLogger;
 import ua.ukrposhta.mediabot.utils.type.LoggerType;
+import ua.ukrposhta.mediabot.utils.type.MessageType;
 
 @Component
 public class HandleInlineTelegramBotState implements HandlerInlineKeyboard {
 
-    private ReplyKeyBoard replyKeyBoard;
+
     private BotLogger telegramLogger = BotLogger.getLogger(LoggerType.TELEGRAM);
     private BotLogger consoleLogger = BotLogger.getLogger(LoggerType.CONSOLE);
+    private SendMessageBot sendMessageBot;
 
     @Autowired
-    public void setReplyKeyBoard(ReplyKeyBoard replyKeyBoard) {
-        this.replyKeyBoard = replyKeyBoard;
+    public void setSendMessageBot(SendMessageBot sendMessageBot) {
+        this.sendMessageBot = sendMessageBot;
     }
+
 
     @Override
     public void handlerInlineKeyboard(Update update, BotContext context, ReplyKeyboardMarkup replyKeyboardMarkup) throws Exception {
@@ -31,45 +34,35 @@ public class HandleInlineTelegramBotState implements HandlerInlineKeyboard {
         String text = "";
 
         switch (state){
+            case START:
+                text = MessageType.GOOD_DAY.getText();
+                break;
             case NAME_SURNAME:
-                text = replyKeyBoard
-                        .getMessagePayloadReader().getMessagePayload(TelegramBotState.NAME_SURNAME.name()).getCaption();
+                text = MessageType.NAME_SURNAME.getText();
                 break;
             case PHONE:
-                text = replyKeyBoard
-                        .getMessagePayloadReader().getMessagePayload(TelegramBotState.PHONE.name()).getCaption();
+                text = MessageType.PHONE.getText();
                 break;
             case EMAIL:
-                text = replyKeyBoard
-                        .getMessagePayloadReader().getMessagePayload(TelegramBotState.EMAIL.name()).getCaption();
+                text = MessageType.EMAIL.getText();
                 break;
             case SUBJECT:
-                text = replyKeyBoard
-                        .getMessagePayloadReader().getMessagePayload(TelegramBotState.SUBJECT.name()).getCaption();
+                text = MessageType.SUBJECT.getText();
                 break;
             case WE_CONTACT:
-                text = replyKeyBoard
-                        .getMessagePayloadReader().getMessagePayload(TelegramBotState.WE_CONTACT.name()).getCaption();
+                text = MessageType.WE_CONTACT.getText();
                 break;
             default:
-                text = replyKeyBoard
-                        .getMessagePayloadReader().getMessagePayload(TelegramBotState.END.name()).getCaption();
+                text = MessageType.END.getText();
                 break;
         }
 
         telegramLogger.info("handlerInlineKeyboard method HandlerInlineMessageType.class : state - " + state +
                 "; text - " + text);
 
-        SendMessage message = SendMessage.builder()
-                .chatId(String.valueOf(context.getUser().getChatId()))
-                .text(text)
-                .replyMarkup(replyKeyboardMarkup)
-                .build();
+        SendMessage message = sendMessageBot.sendMessageBot(context,text,replyKeyboardMarkup, state);
 
         telegramLogger.info("handlerInlineKeyboard method HandlerInlineMessageType.class : message - " + message.toString());
-
-        context.getUser().setStateId(state.ordinal());
-        context.getBot().execute(message);
 
     }
 }

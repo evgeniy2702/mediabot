@@ -10,7 +10,8 @@ public enum  TelegramBotState {
     SUBJECT("SUBJECT"),
     WE_CONTACT("WE_CONTACT"),
     END("END"),
-    PIAR_UNIT("PIAR_UNIT");
+    PIAR_UNIT("PIAR_UNIT")
+    ;
 
     private static TelegramBotState[] states;
     private final String name;

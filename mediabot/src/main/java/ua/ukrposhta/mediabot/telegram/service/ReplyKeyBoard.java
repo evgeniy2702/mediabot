@@ -1,6 +1,5 @@
 package ua.ukrposhta.mediabot.telegram.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -8,7 +7,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import ua.ukrposhta.mediabot.telegram.bot.BotContext;
 import ua.ukrposhta.mediabot.telegram.bot.TelegramBotState;
-import ua.ukrposhta.mediabot.telegram.model.readers.MessagePayloadReader;
 import ua.ukrposhta.mediabot.utils.logger.BotLogger;
 import ua.ukrposhta.mediabot.utils.type.LoggerType;
 
@@ -23,12 +21,6 @@ public class ReplyKeyBoard {
 
     private BotLogger consoleLogger = BotLogger.getLogger(LoggerType.CONSOLE);
     private BotLogger telegramLogger = BotLogger.getLogger(LoggerType.TELEGRAM);
-    private MessagePayloadReader messagePayloadReader;
-
-    @Autowired
-    public void setMessagePayloadReader(MessagePayloadReader messagePayloadReader) {
-        this.messagePayloadReader = messagePayloadReader;
-    }
 
     public ReplyKeyboardMarkup replyButtons(BotContext context) {
 
@@ -36,8 +28,13 @@ public class ReplyKeyBoard {
 
         ReplyKeyboardMarkup replyKeyboardMarkup;
 
-        if(!TelegramBotState.byId(context.getUser().getStateId()).name().equalsIgnoreCase(("END")) &&
+        if(TelegramBotState.byId(context.getUser().getStateId()).name().equalsIgnoreCase("PIAR_UNIT")) {
+
+            replyKeyboardMarkup = ReplyKeyboardMarkup.builder().build();
+
+        } else if(!TelegramBotState.byId(context.getUser().getStateId()).name().equalsIgnoreCase(("END")) &&
                 !TelegramBotState.byId(context.getUser().getStateId()).name().equalsIgnoreCase(("START")) &&
+                !TelegramBotState.byId(context.getUser().getStateId()).name().equalsIgnoreCase(("PIAR")) &&
                 !context.getInput().equalsIgnoreCase("Закінчити роботу з ботом.")) {
 
             KeyboardRow keyboardRow = new KeyboardRow();
@@ -53,8 +50,8 @@ public class ReplyKeyBoard {
                     .build();
 
         } else if(TelegramBotState.byId(context.getUser().getStateId()).name().equalsIgnoreCase(("START")) ||
-                context.getInput().equalsIgnoreCase("Закінчити роботу з ботом.") ||
-                !context.getUser().getChatId().equals(Long.valueOf(chatIdPiarUnit))) {
+                context.getInput().equalsIgnoreCase("Закінчити роботу з ботом.")
+        ) {
 
             KeyboardRow keyboardRow = new KeyboardRow();
             keyboardRow.add(new KeyboardButton("Подати запит."));
@@ -68,11 +65,7 @@ public class ReplyKeyBoard {
                     .keyboard(rowList)
                     .build();
 
-        } else if(TelegramBotState.byId(context.getUser().getStateId()).name().equalsIgnoreCase(("PIAR_UNIT"))) {
-
-            replyKeyboardMarkup = ReplyKeyboardMarkup.builder().build();
-
-        } else {
+        }  else {
                 KeyboardRow keyboardRow = new KeyboardRow();
                 keyboardRow.add(new KeyboardButton("Закінчити роботу з ботом."));
                 keyboardRow.add(new KeyboardButton("Розпочати новий запит."));
@@ -93,7 +86,4 @@ public class ReplyKeyBoard {
         return replyKeyboardMarkup;
     }
 
-    public MessagePayloadReader getMessagePayloadReader(){
-        return messagePayloadReader;
-    }
 }

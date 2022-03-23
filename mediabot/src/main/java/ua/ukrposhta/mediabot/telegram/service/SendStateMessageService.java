@@ -11,7 +11,7 @@ import ua.ukrposhta.mediabot.utils.logger.BotLogger;
 import ua.ukrposhta.mediabot.utils.type.LoggerType;
 import ua.ukrposhta.mediabot.utils.type.MessageType;
 
-import java.util.Map;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -70,18 +70,24 @@ public class SendStateMessageService {
 
                 text = update.getMessage().getText();
 
-                if(checkMatcheStandardMessage(text) || text.equalsIgnoreCase("Подати запит.")
-                    || text.equalsIgnoreCase("Розпочати новий запит.")) {
+                if(checkMatcheStandardMessage(text) ||
+                    text.equalsIgnoreCase("Подати запит.") ||
+                    text.equalsIgnoreCase("Розпочати новий запит.")) {
 
                     replyKeyboardMarkup = replyKeyBoard.replyButtons(context);
+
+                    context.getUser().setStateId(TelegramBotState.START.ordinal());
+                    handleInlineTelegramBotState.handlerInlineKeyboard(update,context,replyKeyboardMarkup);
+
+                    context.getUser().setStateId(TelegramBotState.MEDIA.ordinal());
                     handlerInline
                             .handlerInlineKeyboard(update, context, replyKeyboardMarkup);
                     state = TelegramBotState.NAME_SURNAME;
                 }else {
-                    update.getMessage().setText(MessageType.ERROR.getName());
+                    update.getMessage().setText(MessageType.ERROR.getText());
                     context.getUser().setStateId(TelegramBotState.START.ordinal());
                     user.setStateId(TelegramBotState.START.ordinal());
-                    user.setMessageType(MessageType.ERROR.getName());
+                    user.setMessageType(MessageType.ERROR.getText());
                     replyKeyboardMarkup = replyKeyBoard.replyButtons(context);
                     handlerInlineMessageType
                             .handlerInlineKeyboard(update, context, replyKeyboardMarkup);
@@ -123,10 +129,9 @@ public class SendStateMessageService {
                 }else {
                     state = TelegramBotState.EMAIL;
                     user.setStateId(state.ordinal());
-                    user.setMessageType(MessageType.PHONE_ERROR.getName());
+                    user.setMessageType(MessageType.PHONE_ERROR.getText());
                     update.getMessage()
-                            .setText(replyKeyBoard.getMessagePayloadReader()
-                                    .getMessagePayload(MessageType.PHONE_ERROR.getName()).getCaption());
+                            .setText(MessageType.PHONE_ERROR.getText());
                     replyKeyboardMarkup = replyKeyBoard.replyButtons(context);
                     handlerInlineMessageType
                             .handlerInlineKeyboard(update, context, replyKeyboardMarkup);
@@ -136,7 +141,7 @@ public class SendStateMessageService {
             case SUBJECT:
 
                 text = update.getMessage().getText();
-                pattern = Pattern.compile("^([a-z0-9_-]+\\.)*[a-z0-9_-]+@[a-z0-9_-]+(\\.[a-z0-9_-]+)*\\.[a-z]{2,3}$");
+                pattern = Pattern.compile("^([A-Za-z0-9_-]+\\.)*[A-Za-z0-9_-]+@[a-z0-9_-]+(\\.[a-z0-9_-]+)*\\.[a-z]{2,3}$");
                 matcher = pattern.matcher(text);
 
                 if(matcher.find() ) {
@@ -162,10 +167,9 @@ public class SendStateMessageService {
                 }else {
                     state = TelegramBotState.SUBJECT;
                     user.setStateId(state.ordinal());
-                    user.setMessageType(MessageType.EMAIL_ERROR.getName());
+                    user.setMessageType(MessageType.EMAIL_ERROR.getText());
                     update.getMessage()
-                            .setText(replyKeyBoard.getMessagePayloadReader()
-                                    .getMessagePayload(MessageType.EMAIL_ERROR.getName()).getCaption());
+                            .setText(MessageType.EMAIL_ERROR.getText());
                     replyKeyboardMarkup = replyKeyBoard.replyButtons(context);
                     handlerInlineMessageType
                             .handlerInlineKeyboard(update, context, replyKeyboardMarkup);
@@ -186,10 +190,10 @@ public class SendStateMessageService {
                         .handlerInlineKeyboard(update, context, replyKeyboardMarkup);
 
                 break;
+
             case END:
 
-                if(user.getStateId() != TelegramBotState.END.ordinal() ||
-                        update.getMessage().getText().equalsIgnoreCase("Закінчити роботу з ботом.")){
+                if(update.getMessage().getText().equalsIgnoreCase("Закінчити роботу з ботом.")){
                     state = TelegramBotState.MEDIA;
 
                 } else {
@@ -211,7 +215,7 @@ public class SendStateMessageService {
         return state;
     }
 
-    private boolean checkMatcheStandardMessage(String text){
-        return replyKeyBoard.getMessagePayloadReader().checkMatcheStandardMessage(text);
+    private boolean checkMatcheStandardMessage(String text) {
+        return Arrays.stream(MessageType.values()).anyMatch(message -> message.getText().equals(text));
     }
 }

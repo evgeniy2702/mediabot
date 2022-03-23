@@ -15,14 +15,15 @@ import ua.ukrposhta.mediabot.utils.type.MessageType;
 @Component
 public class HandlerInlineMessageType implements HandlerInlineKeyboard {
 
-    private ReplyKeyBoard replyKeyBoard;
     private BotLogger telegramLogger = BotLogger.getLogger(LoggerType.TELEGRAM);
     private BotLogger consoleLogger = BotLogger.getLogger(LoggerType.CONSOLE);
+    private SendMessageBot sendMessageBot;
 
     @Autowired
-    public void setReplyKeyBoard(ReplyKeyBoard replyKeyBoard) {
-        this.replyKeyBoard = replyKeyBoard;
+    public void setSendMessageBot(SendMessageBot sendMessageBot) {
+        this.sendMessageBot = sendMessageBot;
     }
+
 
     @Override
     public void handlerInlineKeyboard(Update update, BotContext context, ReplyKeyboardMarkup replyKeyboardMarkup) throws Exception {
@@ -35,28 +36,22 @@ public class HandlerInlineMessageType implements HandlerInlineKeyboard {
 
         switch (messageType){
             case "PHONE_ERROR":
-                messageType= replyKeyBoard.getMessagePayloadReader().getMessagePayload(MessageType.PHONE_ERROR.getName()).getCaption();
+                messageType = MessageType.PHONE_ERROR.getText();
                 break;
             case "EMAIL_ERROR":
-                messageType= replyKeyBoard.getMessagePayloadReader().getMessagePayload(MessageType.EMAIL_ERROR.getName()).getCaption();
+                messageType = MessageType.EMAIL_ERROR.getText();
                 break;
             default:
-                messageType= replyKeyBoard.getMessagePayloadReader().getMessagePayload(MessageType.ERROR.getName()).getCaption();
+                messageType = MessageType.ERROR.getText();
                 break;
         }
 
         telegramLogger.info("handlerInlineKeyboard method HandlerInlineMessageType.class : messageType - " + messageType);
 
-        SendMessage message = SendMessage.builder()
-                .chatId(String.valueOf(context.getUser().getChatId()))
-                .text(messageType)
-                .replyMarkup(replyKeyboardMarkup)
-                .build();
+        SendMessage message = sendMessageBot.sendMessageBot(context, messageType ,replyKeyboardMarkup, state);
 
         telegramLogger.info("handlerInlineKeyboard method HandlerInlineMessageType.class : message - " + message.toString());
 
-        context.getUser().setStateId(state.ordinal());
-        context.getBot().execute(message);
 
     }
 }

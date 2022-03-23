@@ -1,15 +1,14 @@
 package ua.ukrposhta.mediabot.telegram.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @ToString
+@EqualsAndHashCode
 public class User {
 
     private Long chatId;
@@ -20,6 +19,7 @@ public class User {
     private String phone;
     private String email;
     private String subject;
+    private String authUrl;
 
     public User(Long chatId, Integer stateId) {
         this.chatId = chatId;
@@ -30,5 +30,6 @@ public class User {
         this.name_surname = "";
         this.phone = "";
         this.subject = "";
+        this.authUrl = "";
     }
 }

@@ -10,7 +10,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ua.ukrposhta.mediabot.telegram.google.GoogleSheetsLive;
 import ua.ukrposhta.mediabot.telegram.model.User;
-import ua.ukrposhta.mediabot.telegram.model.readers.MessagePayloadReader;
 import ua.ukrposhta.mediabot.telegram.service.SendStateMessageService;
 import ua.ukrposhta.mediabot.utils.logger.BotLogger;
 import ua.ukrposhta.mediabot.utils.type.LoggerType;
@@ -31,7 +30,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     private String botToken;
 
     @Value("${telegram.piar.unit.chatId}")
-    private String chatIdPiarUnit = "525009120";
+    private String chatIdPiarUnit = "98280876";
 
     private BotLogger telegramLogger = BotLogger.getLogger(LoggerType.TELEGRAM);
     private BotLogger consoleLogger = BotLogger.getLogger(LoggerType.CONSOLE);
@@ -40,16 +39,9 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private Integer numberOfCellExcelSheet = 0;
 
-    private MessagePayloadReader messagePayloadReader;
-
     private SendStateMessageService sendStateMessageService;
 
     private GoogleSheetsLive googleSheetsLive;
-
-    @Autowired
-    public void setMessagePayloadReader(MessagePayloadReader messagePayloadReader) {
-        this.messagePayloadReader = messagePayloadReader;
-    }
 
     @Autowired
     public void setSendStateMessageService(SendStateMessageService sendStateMessageService) {
@@ -91,6 +83,10 @@ public class TelegramBot extends TelegramLongPollingBot {
                 if (user == null) {
                     state = TelegramBotState.getInitialState();
 
+                    if(update.getMessage().getText().equalsIgnoreCase("Подати запит.") ||
+                            update.getMessage().getText().equalsIgnoreCase("Розпочати новий запит."))
+                        state = TelegramBotState.MEDIA;
+
                     user = new User(chatId, state.ordinal());
 
                     context = BotContext.of(this,  user, text);
@@ -126,12 +122,12 @@ public class TelegramBot extends TelegramLongPollingBot {
 
                     telegramLogger.info("user : " + user.toString());
 
-                    if(!user.getSubject().isEmpty()) {
-                        numberOfCellExcelSheet = googleSheetsLive.readNumberOfCellExcelSheetFromExcelSheet(numberOfCellExcelSheet, user);
+                    if(!user.getSubject().equalsIgnoreCase("") &&
+                            (user.getStateId() == TelegramBotState.END.ordinal())) {
+                        numberOfCellExcelSheet = googleSheetsLive.readNumberOfCellExcelSheetFromExcelSheet(context, numberOfCellExcelSheet);
                         sendNewRequestForPiar(context, chatIdPiarUnit);
+                        users.remove(chatId);
                     }
-
-                    System.out.println("numberOfCellExcelSheet : " + numberOfCellExcelSheet);
 
                     telegramLogger.info("Name of cell in excel google sheet : " + numberOfCellExcelSheet);
 
@@ -165,14 +161,14 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         consoleLogger.info("start sendNewRequestForPiar method in TelegramBot.class");
 
-        context.getUser().setSubject(null);
-
         if(!context.getUser().getSubject().isEmpty()) {
 
             SendMessage message = SendMessage.builder()
                     .chatId(chatIdPiarUnit)
-                    .text(messagePayloadReader.getMessagePayload(MessageType.PIAR_UNIT.getName()).getCaption() + " від " +
-                            context.getUser().getMediaName() + ".\nЗапит : " + context.getUser().getSubject())
+                    .text(MessageType.PIAR_UNIT.getText() + "\n1) Назва : " +
+                            context.getUser().getMediaName() + ".\n2) Запит : " + context.getUser().getSubject() +
+                            "\n3) Посилання на таблицю запитів : " +
+                            "https://docs.google.com/spreadsheets/d/1juzFkS2cZctAT7exY4N9fS4WfwrWZ3AVqweKJXAy0hE/edit#gid=0")
                     .build();
 
             try {
