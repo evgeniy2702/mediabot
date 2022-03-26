@@ -2,7 +2,6 @@ package ua.ukrposhta.mediabot.utils.logger;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-import ua.ukrposhta.mediabot.utils.type.BotType;
 import ua.ukrposhta.mediabot.utils.type.LoggerType;
 
 import java.io.IOException;
@@ -27,15 +26,6 @@ public abstract class BotLogger {
                 throw new IllegalArgumentException("Can't resolve logger type!");
         }
         return logger;
-    }
-
-    public static BotLogger getLogger(BotType botType) {
-        switch (botType) {
-            case TELEGRAM:
-                return TelegramLogger.getInstance();
-            default:
-                throw new IllegalArgumentException("Can't resolve bot type!");
-        }
     }
 
     private void configure() {

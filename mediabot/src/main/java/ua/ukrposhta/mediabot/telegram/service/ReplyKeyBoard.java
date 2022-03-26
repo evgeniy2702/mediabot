@@ -8,6 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import ua.ukrposhta.mediabot.telegram.bot.BotContext;
 import ua.ukrposhta.mediabot.telegram.bot.TelegramBotState;
 import ua.ukrposhta.mediabot.utils.logger.BotLogger;
+import ua.ukrposhta.mediabot.utils.type.ButtonType;
 import ua.ukrposhta.mediabot.utils.type.LoggerType;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ import java.util.List;
 public class ReplyKeyBoard {
 
     @Value("${telegram.piar.unit.chatId}")
-    private String chatIdPiarUnit = "525009120";
+    private String chatIdPiarUnit = "98280876";
 
     private BotLogger consoleLogger = BotLogger.getLogger(LoggerType.CONSOLE);
     private BotLogger telegramLogger = BotLogger.getLogger(LoggerType.TELEGRAM);
@@ -28,17 +29,16 @@ public class ReplyKeyBoard {
 
         ReplyKeyboardMarkup replyKeyboardMarkup;
 
-        if(TelegramBotState.byId(context.getUser().getStateId()).name().equalsIgnoreCase("PIAR_UNIT")) {
+        if(TelegramBotState.byId(context.getUser().getStateId()).name().equalsIgnoreCase(TelegramBotState.PIAR_UNIT.name())) {
 
             replyKeyboardMarkup = ReplyKeyboardMarkup.builder().build();
 
-        } else if(!TelegramBotState.byId(context.getUser().getStateId()).name().equalsIgnoreCase(("END")) &&
-                !TelegramBotState.byId(context.getUser().getStateId()).name().equalsIgnoreCase(("START")) &&
-                !TelegramBotState.byId(context.getUser().getStateId()).name().equalsIgnoreCase(("PIAR")) &&
-                !context.getInput().equalsIgnoreCase("Закінчити роботу з ботом.")) {
+        } else if(TelegramBotState.byId(context.getUser().getStateId()).name().equalsIgnoreCase(TelegramBotState.START.name()) ||
+                context.getInput().equalsIgnoreCase(ButtonType.END_WORK.getText())
+        ) {
 
             KeyboardRow keyboardRow = new KeyboardRow();
-            keyboardRow.add(new KeyboardButton("Закінчити роботу з ботом."));
+            keyboardRow.add(new KeyboardButton(ButtonType.REQUEST.getText()));
 
             List<KeyboardRow> rowList = new ArrayList<>();
             rowList.add(keyboardRow);
@@ -49,12 +49,14 @@ public class ReplyKeyBoard {
                     .keyboard(rowList)
                     .build();
 
-        } else if(TelegramBotState.byId(context.getUser().getStateId()).name().equalsIgnoreCase(("START")) ||
-                context.getInput().equalsIgnoreCase("Закінчити роботу з ботом.")
-        ) {
+        } else if(!TelegramBotState.byId(context.getUser().getStateId()).name().equalsIgnoreCase(TelegramBotState.END.name()) &&
+                !TelegramBotState.byId(context.getUser().getStateId()).name().equalsIgnoreCase(TelegramBotState.START.name()) &&
+                !TelegramBotState.byId(context.getUser().getStateId()).name().equalsIgnoreCase(TelegramBotState.PIAR_UNIT.name()) &&
+                !context.getInput().equalsIgnoreCase(ButtonType.END_WORK.getText())) {
+
 
             KeyboardRow keyboardRow = new KeyboardRow();
-            keyboardRow.add(new KeyboardButton("Подати запит."));
+            keyboardRow.add(new KeyboardButton(ButtonType.END_WORK.getText()));
 
             List<KeyboardRow> rowList = new ArrayList<>();
             rowList.add(keyboardRow);
@@ -67,8 +69,8 @@ public class ReplyKeyBoard {
 
         }  else {
                 KeyboardRow keyboardRow = new KeyboardRow();
-                keyboardRow.add(new KeyboardButton("Закінчити роботу з ботом."));
-                keyboardRow.add(new KeyboardButton("Розпочати новий запит."));
+                keyboardRow.add(new KeyboardButton(ButtonType.END_WORK.getText()));
+                keyboardRow.add(new KeyboardButton(ButtonType.REPEAT_REQUEST.getText()));
 
                 List<KeyboardRow> rowList = new ArrayList<>();
                 rowList.add(keyboardRow);

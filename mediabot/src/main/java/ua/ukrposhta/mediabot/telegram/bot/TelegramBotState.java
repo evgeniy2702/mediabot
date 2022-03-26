@@ -14,12 +14,7 @@ public enum  TelegramBotState {
     ;
 
     private static TelegramBotState[] states;
-    private final String name;
-
-    TelegramBotState(){
-        this.name = "/start";
-    }
-
+    public String name;
 
     TelegramBotState(String  name){
         this.name = name;

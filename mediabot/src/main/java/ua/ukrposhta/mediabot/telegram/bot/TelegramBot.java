@@ -12,6 +12,7 @@ import ua.ukrposhta.mediabot.telegram.google.GoogleSheetsLive;
 import ua.ukrposhta.mediabot.telegram.model.User;
 import ua.ukrposhta.mediabot.telegram.service.SendStateMessageService;
 import ua.ukrposhta.mediabot.utils.logger.BotLogger;
+import ua.ukrposhta.mediabot.utils.type.ButtonType;
 import ua.ukrposhta.mediabot.utils.type.LoggerType;
 import ua.ukrposhta.mediabot.utils.type.MessageType;
 
@@ -67,6 +68,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
 
         consoleLogger.info("start onUpdateReceived method in TelegramBot.class");
+
         telegramLogger.info("Update of onUpdateReceived method of telegram bot  : " + update.toString());
 
         if (update.hasMessage()) {
@@ -83,8 +85,8 @@ public class TelegramBot extends TelegramLongPollingBot {
                 if (user == null) {
                     state = TelegramBotState.getInitialState();
 
-                    if(update.getMessage().getText().equalsIgnoreCase("Подати запит.") ||
-                            update.getMessage().getText().equalsIgnoreCase("Розпочати новий запит."))
+                    if(update.getMessage().getText().equalsIgnoreCase(ButtonType.REQUEST.getText()) ||
+                            update.getMessage().getText().equalsIgnoreCase(ButtonType.REPEAT_REQUEST.getText()))
                         state = TelegramBotState.MEDIA;
 
                     user = new User(chatId, state.ordinal());
@@ -94,7 +96,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
                 } else {
 
-                    if(text.equalsIgnoreCase("/start")){
+                    if(text.equalsIgnoreCase(TelegramBotState.START.name())){
                         state = TelegramBotState.START;
                     } else {
                         state = TelegramBotState.byId(user.getStateId());
@@ -132,9 +134,9 @@ public class TelegramBot extends TelegramLongPollingBot {
                     telegramLogger.info("Name of cell in excel google sheet : " + numberOfCellExcelSheet);
 
                 } catch (Exception e) {
-                    consoleLogger.error("ERROR : " + Arrays.toString(e.getStackTrace()));
+
                     telegramLogger.error("ERROR : " +Arrays.toString(e.getStackTrace()));
-                    e.printStackTrace();
+
                 }
             }
         }
@@ -149,7 +151,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         String text = update.getMessage().getText();
 
         if (!update.hasCallbackQuery()) {
-            if (text.equalsIgnoreCase("Закінчити роботу з ботом.")) {
+            if (text.equalsIgnoreCase(ButtonType.END_WORK.getText())) {
                 state = TelegramBotState.END;
                 user.setStateId(state.ordinal());
             }
@@ -171,18 +173,18 @@ public class TelegramBot extends TelegramLongPollingBot {
                             "https://docs.google.com/spreadsheets/d/1juzFkS2cZctAT7exY4N9fS4WfwrWZ3AVqweKJXAy0hE/edit#gid=0")
                     .build();
 
+            telegramLogger.info("In sendNewRequestForPiar method TelegramBot.class to : chatId = " + message.toString() +
+                                ";  message = " + message.getText());
+
             try {
 
                 context.getBot().execute(message);
 
             } catch (TelegramApiException e) {
                 telegramLogger.error("ERROR in sendNewRequestForPiar method of TelegramBot.class : " + Arrays.asList(e.getStackTrace()));
-                consoleLogger.error("ERROR in sendNewRequestForPiar method of TelegramBot.class : " + Arrays.asList(e.getStackTrace()));
-                e.printStackTrace();
             }
             telegramLogger.info("send message about request info to telegram of piar unit ukrposhta with chatId : " + chatIdPiarUnit);
         }
-
         telegramLogger.info("do not send message about request info to telegram of piar unit ukrposhta because subject of requestMedia is null.");
     }
 
