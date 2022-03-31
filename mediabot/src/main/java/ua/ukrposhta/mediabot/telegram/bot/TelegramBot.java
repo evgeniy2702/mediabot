@@ -19,6 +19,7 @@ import ua.ukrposhta.mediabot.utils.type.MessageType;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 @PropertySource("classpath:properties/bot.properties")
@@ -96,8 +97,9 @@ public class TelegramBot extends TelegramLongPollingBot {
 
                 } else {
 
-                    if(text.equalsIgnoreCase(TelegramBotState.START.name())){
-                        state = TelegramBotState.START;
+                    if(text.equalsIgnoreCase(TelegramBotState.LANGUAGE.name()) ||
+                        text.equalsIgnoreCase("START")){
+                        state = TelegramBotState.LANGUAGE;
                     } else {
                         state = TelegramBotState.byId(user.getStateId());
                     }
@@ -150,10 +152,19 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         String text = update.getMessage().getText();
 
-        if (!update.hasCallbackQuery()) {
+        if (update.getCallbackQuery() == null) {
+
             if (text.equalsIgnoreCase(ButtonType.END_WORK.getText())) {
                 state = TelegramBotState.END;
                 user.setStateId(state.ordinal());
+            }
+            if (user.getMessagesListBot() != null) {
+                if (text.equalsIgnoreCase(user.getButtonsNameList().getMessages().stream()
+                        .filter(b -> b.getType().equalsIgnoreCase(ButtonType.END_WORK.name()))
+                        .collect(Collectors.toList()).get(0).getTxt())) {
+                    state = TelegramBotState.END;
+                    user.setStateId(state.ordinal());
+                }
             }
         }
         return state;

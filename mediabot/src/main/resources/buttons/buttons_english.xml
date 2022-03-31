@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<messages>
+
+    <message>
+        <type>REQUEST</type>
+        <txt>Submit a request.</txt>
+    </message>
+
+    <message>
+        <type>REPEAT_REQUEST</type>
+        <txt>Start a new query.</txt>
+    </message>
+
+    <message>
+        <type>END_WORK</type>
+        <txt>Finish working with the bot.</txt>
+    </message>
+
+</messages>

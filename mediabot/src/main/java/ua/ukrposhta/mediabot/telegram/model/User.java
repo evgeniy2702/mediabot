@@ -20,6 +20,9 @@ public class User {
     private String email;
     private String subject;
     private String authUrl;
+    private String language;
+    private MessagesListBot messagesListBot;
+    private MessagesListBot buttonsNameList;
 
     public User(Long chatId, Integer stateId) {
         this.chatId = chatId;
@@ -31,5 +34,6 @@ public class User {
         this.phone = "";
         this.subject = "";
         this.authUrl = "";
+        this.language = "";
     }
 }

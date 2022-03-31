@@ -11,6 +11,8 @@ import ua.ukrposhta.mediabot.utils.logger.BotLogger;
 import ua.ukrposhta.mediabot.utils.type.LoggerType;
 import ua.ukrposhta.mediabot.utils.type.MessageType;
 
+import java.util.stream.Collectors;
+
 
 @Component
 public class HandlerInlineMessageType implements HandlerInlineKeyboard {
@@ -36,13 +38,28 @@ public class HandlerInlineMessageType implements HandlerInlineKeyboard {
 
         switch (messageType){
             case "PHONE_ERROR":
-                messageType = MessageType.PHONE_ERROR.getText();
+                messageType = context.getUser().getMessagesListBot().getMessages().stream()
+                        .filter(msg -> msg.getType().equalsIgnoreCase(MessageType.PHONE_ERROR.name()))
+                        .collect(Collectors.toList()).get(0).getTxt();
+
                 break;
             case "EMAIL_ERROR":
-                messageType = MessageType.EMAIL_ERROR.getText();
+                messageType = context.getUser().getMessagesListBot().getMessages().stream()
+                        .filter(msg -> msg.getType().equalsIgnoreCase(MessageType.EMAIL_ERROR.name()))
+                        .collect(Collectors.toList()).get(0).getTxt();
+                break;
+            case "ERROR_CHOICE_LANGUAGE":
+                if(context.getUser().getMessagesListBot() == null)
+                    messageType = MessageType.ERROR_CHOICE_LANGUAGE.getText();
+                else
+                    messageType = context.getUser().getMessagesListBot().getMessages().stream()
+                            .filter(msg -> msg.getType().equalsIgnoreCase(MessageType.ERROR.name()))
+                            .collect(Collectors.toList()).get(0).getTxt();
                 break;
             default:
-                messageType = MessageType.ERROR.getText();
+                messageType = context.getUser().getMessagesListBot().getMessages().stream()
+                        .filter(msg -> msg.getType().equalsIgnoreCase(MessageType.ERROR.name()))
+                        .collect(Collectors.toList()).get(0).getTxt();
                 break;
         }
 

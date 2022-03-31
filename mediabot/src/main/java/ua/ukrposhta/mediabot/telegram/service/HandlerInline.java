@@ -8,8 +8,11 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMar
 import ua.ukrposhta.mediabot.telegram.bot.BotContext;
 import ua.ukrposhta.mediabot.telegram.bot.TelegramBotState;
 import ua.ukrposhta.mediabot.utils.logger.BotLogger;
+import ua.ukrposhta.mediabot.utils.type.ButtonType;
 import ua.ukrposhta.mediabot.utils.type.LoggerType;
 import ua.ukrposhta.mediabot.utils.type.MessageType;
+
+import java.util.stream.Collectors;
 
 @Component
 public class HandlerInline implements HandlerInlineKeyboard {
@@ -38,16 +41,19 @@ public class HandlerInline implements HandlerInlineKeyboard {
 
         switch (text){
             case "/start":
-                text = MessageType.START.getText();
+                text = context.getUser().getMessagesListBot().getMessages().stream()
+                        .filter(sms -> sms.getType().equalsIgnoreCase(MessageType.LANGUAGE.name()))
+                        .collect(Collectors.toList()).get(0).getTxt();
                 break;
-            case "Подати запит.":
-                text = MessageType.MEDIA.getText();
+            case "Українська":
+                text = context.getUser().getMessagesListBot().getMessages().stream()
+                        .filter(sms -> sms.getType().equalsIgnoreCase(MessageType.SELECT.name()))
+                        .collect(Collectors.toList()).get(0).getTxt();
                 break;
-            case "Розпочати новий запит.":
-                text = MessageType.MEDIA.getText();
-                break;
-            default:
-                text = MessageType.SUBJECT.getText();
+            case "English":
+                text = context.getUser().getMessagesListBot().getMessages().stream()
+                        .filter(sms -> sms.getType().equalsIgnoreCase(MessageType.SELECT.name()))
+                        .collect(Collectors.toList()).get(0).getTxt();
                 break;
         }
 

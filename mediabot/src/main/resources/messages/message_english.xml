@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<messages>
+
+    <message>
+        <type>START</type>
+        <txt>Hello! This chatbot was created especially for media to get comments from Ukrposhta!</txt>
+    </message>
+
+    <message>
+        <type>GOOD_DAY</type>
+        <txt>Glory to Ukraine!</txt>
+    </message>
+
+    <message>
+        <type>SELECT</type>
+        <txt>Thank you for your choice. Glory to Ukraine!</txt>
+    </message>
+
+    <message>
+        <type>MEDIA</type>
+        <txt>📰 Write the name of the media .</txt>
+    </message>
+
+    <message>
+        <type>NAME_SURNAME</type>
+        <txt>👤 Write your name and surname.</txt>
+    </message>
+
+    <message>
+        <type>PHONE</type>
+        <txt>🔢 Write your telephone number on format 067 244 44 45.</txt>
+    </message>
+
+    <message>
+        <type>EMAIL</type>
+        <txt>📧 Write an e-mail.</txt>
+    </message>
+
+    <message>
+        <type>SUBJECT</type>
+        <txt>❓ Write the questions</txt>
+    </message>
+
+    <message>
+        <type>WE_CONTACT</type>
+        <txt>✅ Done! Thank you for request! We will contact you soon to clarify the details. Glory to Ukraine!</txt>
+    </message>
+
+    <message>
+        <type>END</type>
+        <txt>Goodbye!</txt>
+    </message>
+
+    <message>
+        <type>PHONE_ERROR</type>
+        <txt>🔢 Yuo are wrong. Write your telephone number on format 067 244 44 45 again.</txt>
+    </message>
+
+    <message>
+        <type>EMAIL_ERROR</type>
+        <txt>📧 Yuo are wrong. Write an e-mail again.</txt>
+    </message>
+
+    <message>
+        <type>ERROR</type>
+        <txt>Oops! Sorry, I can't recognize your request. Please select an action from the menu .</txt>
+    </message>
+
+    <message>
+        <type>PIAR_UNIT</type>
+        <txt>New media appeal : </txt>
+    </message>
+
+</messages>

@@ -2,7 +2,9 @@ package ua.ukrposhta.mediabot.telegram.bot;
 
 public enum  TelegramBotState {
 
-    START("/start"),
+    LANGUAGE("/start"),
+    START("LANGUAGE"),
+    GOOD_DAY("GOOD_DAY"),
     MEDIA("MEDIA"),
     NAME_SURNAME("NAME_SURNAME"),
     PHONE("PHONE"),

@@ -2,9 +2,12 @@ package ua.ukrposhta.mediabot.utils.type;
 
 public enum ButtonType {
 
+    START("/start"),
+    UA("Українська"),
+    EN("English"),
     REQUEST("Подати запит."),
     REPEAT_REQUEST("Розпочати новий запит."),
-    END_WORK("Закінчити роботу з ботом.")
+    END_WORK("Закінчити роботу з ботом | Finish working with the bot.")
     ;
 
     private String text;
