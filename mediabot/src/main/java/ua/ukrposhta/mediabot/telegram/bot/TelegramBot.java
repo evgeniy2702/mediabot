@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
-@PropertySource("classpath:properties/bot.properties")
+@PropertySource("classpath:properties/link_buttons_message.properties")
 public class TelegramBot extends TelegramLongPollingBot {
 
     @Value("${telegramBot.name}")
@@ -31,8 +31,14 @@ public class TelegramBot extends TelegramLongPollingBot {
     @Value("${telegramBot.token}")
     private String botToken;
 
-    @Value("${telegram.piar.unit.chatId}")
-    private String chatIdPiarUnit = "98280876";
+    @Value("${telegram.piar.unit.first.chatId}")
+    private String firstChatIdPiarUnit = "98280876";
+
+    @Value("${telegram.piar.unit.second.chatId}")
+    private String secondChatIdPiarUnit = "102027711";
+
+    @Value("${spring.profiles.active}")
+    private String activeProfile;
 
     private BotLogger telegramLogger = BotLogger.getLogger(LoggerType.TELEGRAM);
     private BotLogger consoleLogger = BotLogger.getLogger(LoggerType.CONSOLE);
@@ -118,7 +124,8 @@ public class TelegramBot extends TelegramLongPollingBot {
 
                 try {
 
-                    if(user.getChatId() != Long.parseLong(chatIdPiarUnit)) {
+                    if(user.getChatId() != Long.parseLong(firstChatIdPiarUnit) ||
+                            user.getChatId() != Long.parseLong(secondChatIdPiarUnit)) {
                         state = sendStateMessageService.sendStateMessage(state, context, update, user);
                         user.setStateId(state.ordinal());
                         users.put(chatId, user);
@@ -129,7 +136,13 @@ public class TelegramBot extends TelegramLongPollingBot {
                     if(!user.getSubject().equalsIgnoreCase("") &&
                             (user.getStateId() == TelegramBotState.END.ordinal())) {
                         numberOfCellExcelSheet = googleSheetsLive.readNumberOfCellExcelSheetFromExcelSheet(context, numberOfCellExcelSheet);
-                        sendNewRequestForPiar(context, chatIdPiarUnit);
+                        if(!this.activeProfile.equalsIgnoreCase("dev")) {
+                            sendNewRequestForPiar(context, firstChatIdPiarUnit);
+                            sendNewRequestForPiar(context, secondChatIdPiarUnit);
+                        }
+
+                        consoleLogger.info("SEND info about request firstChatIdPiarUnit : " + firstChatIdPiarUnit + " | secondChatIdPiarUnit : " +
+                                secondChatIdPiarUnit);
                         users.remove(chatId);
                     }
 

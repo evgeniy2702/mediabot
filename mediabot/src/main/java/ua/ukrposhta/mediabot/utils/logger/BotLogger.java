@@ -1,17 +1,9 @@
 package ua.ukrposhta.mediabot.utils.logger;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import ch.qos.logback.classic.Logger;
 import ua.ukrposhta.mediabot.utils.type.LoggerType;
 
-import java.io.IOException;
-import java.util.Properties;
-
 public abstract class BotLogger {
-
-    public BotLogger() {
-        configure();
-    }
 
     public static BotLogger getLogger(LoggerType type) {
         BotLogger logger = null;
@@ -28,25 +20,11 @@ public abstract class BotLogger {
         return logger;
     }
 
-    private void configure() {
-        Properties logProperties = new Properties();
-        try {
-            logProperties.load(BotLogger.class.getClassLoader().getResourceAsStream("properties/log4j.properties"));
-            PropertyConfigurator.configure(logProperties);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void info(Object message) {
+    public void info(String  message) {
         getLogger().info(message);
     }
 
-    public void warn(Object message) {
-        getLogger().warn(message);
-    }
-
-    public void error(Object message) {
+    public void error(String message) {
         getLogger().error(message);
     }
 

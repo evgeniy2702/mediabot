@@ -8,7 +8,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMar
 import ua.ukrposhta.mediabot.telegram.bot.BotContext;
 import ua.ukrposhta.mediabot.telegram.bot.TelegramBotState;
 import ua.ukrposhta.mediabot.utils.logger.BotLogger;
-import ua.ukrposhta.mediabot.utils.parserXml.MySaxParser;
 import ua.ukrposhta.mediabot.utils.type.ButtonType;
 import ua.ukrposhta.mediabot.utils.type.LoggerType;
 import ua.ukrposhta.mediabot.utils.type.MessageType;
@@ -22,16 +21,10 @@ public class HandleInlineTelegramBotState implements HandlerInlineKeyboard {
     private BotLogger telegramLogger = BotLogger.getLogger(LoggerType.TELEGRAM);
     private BotLogger consoleLogger = BotLogger.getLogger(LoggerType.CONSOLE);
     private SendMessageBot sendMessageBot;
-    private MySaxParser mySaxParser;
 
     @Autowired
     public void setSendMessageBot(SendMessageBot sendMessageBot) {
         this.sendMessageBot = sendMessageBot;
-    }
-
-    @Autowired
-    public void setMySaxParser(MySaxParser mySaxParser) {
-        this.mySaxParser = mySaxParser;
     }
 
     @Override

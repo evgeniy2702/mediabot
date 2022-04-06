@@ -1,10 +1,12 @@
 package ua.ukrposhta.mediabot.utils.logger;
 
-import org.apache.log4j.Logger;
+import ch.qos.logback.classic.Logger;
+import org.slf4j.LoggerFactory;
+import ua.ukrposhta.mediabot.utils.type.LoggerType;
 
 public class TelegramLogger extends BotLogger{
     private static volatile TelegramLogger instance;
-    private Logger logger = Logger.getLogger("telegramLogger");
+    private Logger logger = (Logger)LoggerFactory.getLogger(LoggerType.TELEGRAM.getText());
 
     private TelegramLogger() {}
 

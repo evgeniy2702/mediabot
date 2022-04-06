@@ -18,27 +18,27 @@
 
     <message>
         <type>MEDIA</type>
-        <txt>📰 Write the name of the media .</txt>
+        <txt>📰 Write the name of the media, please .</txt>
     </message>
 
     <message>
         <type>NAME_SURNAME</type>
-        <txt>👤 Write your name and surname.</txt>
+        <txt>👤 Write your name and surname, please.</txt>
     </message>
 
     <message>
         <type>PHONE</type>
-        <txt>🔢 Write your telephone number on format 067 244 44 45.</txt>
+        <txt>🔢 Write your telephone number as +380XX XXX XX XX, please.</txt>
     </message>
 
     <message>
         <type>EMAIL</type>
-        <txt>📧 Write an e-mail.</txt>
+        <txt>📧 Please, give us your email address.</txt>
     </message>
 
     <message>
         <type>SUBJECT</type>
-        <txt>❓ Write the questions</txt>
+        <txt>❓ Good. We’re looking forward to your questions. Write them below, please .</txt>
     </message>
 
     <message>
@@ -53,12 +53,12 @@
 
     <message>
         <type>PHONE_ERROR</type>
-        <txt>🔢 Yuo are wrong. Write your telephone number on format 067 244 44 45 again.</txt>
+        <txt>🔢 Looks like you are wrong. Please, write your telephone number in international format +380XX XXX XX XX again.</txt>
     </message>
 
     <message>
         <type>EMAIL_ERROR</type>
-        <txt>📧 Yuo are wrong. Write an e-mail again.</txt>
+        <txt>📧 We think, it’s not correct. Write an email again, please.</txt>
     </message>
 
     <message>

@@ -1,7 +1,7 @@
 package ua.ukrposhta.mediabot.telegram.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
@@ -9,10 +9,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.xml.sax.SAXException;
 import ua.ukrposhta.mediabot.telegram.bot.BotContext;
 import ua.ukrposhta.mediabot.telegram.bot.TelegramBotState;
-import ua.ukrposhta.mediabot.telegram.model.MessagesListBot;
-import ua.ukrposhta.mediabot.utils.handlerXml.MySaxHandler;
 import ua.ukrposhta.mediabot.utils.logger.BotLogger;
-import ua.ukrposhta.mediabot.utils.parserXml.MySaxParser;
 import ua.ukrposhta.mediabot.utils.type.ButtonType;
 import ua.ukrposhta.mediabot.utils.type.LoggerType;
 
@@ -23,10 +20,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+@PropertySource({"classpath:properties/link_buttons_message.properties"})
 public class ReplyKeyBoard {
-
-    @Value("${telegram.piar.unit.chatId}")
-    private String chatIdPiarUnit = "98280876";
 
     @Value("${path.xml.ukraine}")
     private String pathXmlUkraine ;
@@ -41,18 +36,6 @@ public class ReplyKeyBoard {
     private BotLogger consoleLogger = BotLogger.getLogger(LoggerType.CONSOLE);
     private BotLogger telegramLogger = BotLogger.getLogger(LoggerType.TELEGRAM);
 
-    private MySaxParser mySaxParser;
-    private MySaxHandler mySaxHandler;
-
-    @Autowired
-    public void setMySaxParser(MySaxParser mySaxParser) {
-        this.mySaxParser = mySaxParser;
-    }
-
-    @Autowired
-    public void setMySaxHandler(MySaxHandler mySaxHandler) {
-        this.mySaxHandler = mySaxHandler;
-    }
 
     public ReplyKeyboardMarkup replyButtons(BotContext context) throws IOException, SAXException, ParserConfigurationException {
 

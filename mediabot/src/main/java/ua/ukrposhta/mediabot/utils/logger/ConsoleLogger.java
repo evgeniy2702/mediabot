@@ -1,11 +1,13 @@
 package ua.ukrposhta.mediabot.utils.logger;
 
-import org.apache.log4j.Logger;
+import ch.qos.logback.classic.Logger;
+import org.slf4j.LoggerFactory;
+import ua.ukrposhta.mediabot.utils.type.LoggerType;
 
 public class ConsoleLogger extends BotLogger {
 
     private static volatile ConsoleLogger instance;
-    private Logger logger = Logger.getLogger("consoleLogger");
+    private ch.qos.logback.classic.Logger logger = (Logger)LoggerFactory.getLogger(LoggerType.CONSOLE.getText());
 
     private ConsoleLogger() {}
 
@@ -24,5 +26,6 @@ public class ConsoleLogger extends BotLogger {
     protected Logger getLogger() {
         return logger;
     }
+
 
 }

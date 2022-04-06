@@ -2,6 +2,7 @@ package ua.ukrposhta.mediabot.telegram.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -23,6 +24,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Component
+@PropertySource({"classpath:properties/link_buttons_message.properties"})
 public class SendStateMessageService {
 
     @Value("${path.xml.ukraine}")
@@ -212,7 +214,7 @@ public class SendStateMessageService {
             case EMAIL:
 
                 text = update.getMessage().getText();
-                pattern = Pattern.compile("^[0-9]{3} [0-9]{3} [0-9]{2} [0-9]{2}$");
+                pattern = Pattern.compile("^\\+380[0-9]{2} [0-9]{3} [0-9]{2} [0-9]{2}$");
                 matcher = pattern.matcher(text);
 
                 if(matcher.find()) {
